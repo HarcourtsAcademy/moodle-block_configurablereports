@@ -22,7 +22,8 @@
   * @date: 2009
   */
 
-define('REPORT_CUSTOMSQL_MAX_RECORDS', 5000);
+/* Academy Patch #21 Remove Custom Report Record Limit */
+define('REPORT_CUSTOMSQL_MAX_RECORDS', 10000);
 
 class report_sql extends report_base{
 	
