@@ -110,13 +110,17 @@ class block_configurable_reports extends block_list {
             $reports = $DB->get_records('block_configurable_reports', array('global' => 1), 'name ASC');
 
             if ($reports) {
+                $sitereportsexist = false; /* Academy Patch M#015 Configurable reports block containing only spacer "====" characters appears to guests. */
                 foreach ($reports as $report) {
                     if ($report->visible && cr_check_report_permissions($report, $USER->id, $context)) {
                         $rname = format_string($report->name);
                         $this->content->items[] = '<a href= "'.$CFG->wwwroot.'/blocks/configurable_reports/viewreport.php?id='.$report->id.'&courseid='.$course->id.'" alt="'.$rname.'">'.$rname.'</a>';
+                        $sitereportsexist = true;
                     }
                 }
-                $this->content->items[] = '========';
+                if ($sitereportsexist) {
+                    $this->content->items[] = '';
+                }
             }
         }
 
@@ -127,13 +131,18 @@ class block_configurable_reports extends block_list {
             $reports = $DB->get_records('block_configurable_reports', array('courseid' => $course->id), 'name ASC');
 
             if ($reports) {
+                $coursereportsexist = false; /* Academy Patch M#015 Configurable reports block containing only spacer "====" characters appears to guests. */
                 foreach ($reports as $report) {
                     if (!$report->global && $report->visible && cr_check_report_permissions($report, $USER->id, $context)) {
                         $rname = format_string($report->name);
                         $this->content->items[] = '<a href= "'.$CFG->wwwroot.'/blocks/configurable_reports/viewreport.php?id='.$report->id.'&courseid='.$course->id.'" alt="'.$rname.'">'.$rname.'</a>';
+                        $coursereportsexist = true;
                     }
                 }
-                $this->content->items[] = '========';
+
+                if ($coursereportsexist) {
+                    $this->content->items[] = '';
+                }
             }
         }
 
