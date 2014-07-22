@@ -24,11 +24,10 @@
 
 require_once($CFG->dirroot.'/blocks/configurable_reports/plugin.class.php');
 
-class plugin_userfield extends plugin_base{
+class plugin_finalgradeincurrentcourse extends plugin_base{
 
 	function init(){
-		$this->fullname = get_string('userfield','block_configurable_reports');
-		$this->type = 'undefined';
+		$this->fullname = get_string('finalgradeincurrentcourse','block_configurable_reports');
 		$this->form = true;
 		$this->reporttypes = array('users');
 	}
@@ -45,48 +44,19 @@ class plugin_userfield extends plugin_base{
 	}
 
 	// data -> Plugin configuration data
-	// row -> Complet user row c->id, c->fullname, etc...
+	// row -> Complet course row c->id, c->fullname, etc...
 	function execute($data,$row,$user,$courseid,$starttime=0,$endtime=0){
-		global $DB, $CFG;
+		global $DB, $USER, $CFG;
 
-		if(strpos($data->column,'profile_') === 0){
-			if($profiledata = $DB->get_records_sql("SELECT d.*, f.shortname, f.datatype FROM {user_info_data} d ,{user_info_field} f
-							WHERE f.id = d.fieldid AND d.userid = ?", array($row->id))){
-				foreach($profiledata as $p){
-					if($p->datatype == 'checkbox'){
-						$p->data = ($p->data)? get_string('yes') : get_string('no');
-					}
-					if($p->datatype == 'datetime'){
-						$p->data = userdate($p->data);
-					}
-					$row->{'profile_'.$p->shortname} = $p->data;
-				}
-			}
+		$userid = $row->id;
+		require_once($CFG->libdir.'/gradelib.php');
+		require_once($CFG->dirroot.'/grade/querylib.php');
+
+		if($grade = grade_get_course_grade($userid, $courseid)){
+			return $grade->grade;
 		}
 
-		$row->fullname = fullname($row);
-
-		if(isset($row->{$data->column})){
-			switch($data->column){
-				case 'firstaccess':
-				case 'lastaccess':
-				case 'currentlogin':
-				case 'timemodified':
-				case 'lastlogin': 	$row->{$data->column} = ($row->{$data->column})? userdate($row->{$data->column}): '--';
-									break;
-				case 'confirmed':
-				case 'policyagreed':
-				case 'maildigest':
-				case 'ajax':
-				case 'autosubscribe':
-				case 'trackforums':
-				case 'screenreader':
-				case 'emailstop':
-									$row->{$data->column} = ($row->{$data->column})? get_string('yes') : get_string('no');
-									break;
-			}
-		}
-		return (isset($row->{$data->column}))? $row->{$data->column} : '';
+		return '';
 	}
 
 }
