@@ -65,7 +65,13 @@ function cr_add_jsdatatables($cssid) {
         'datatables_zerorecords',
     ), 'block_configurable_reports');
 
-    echo html_writer::script(false, new moodle_url('/blocks/configurable_reports/js/datatables/media/js/jquery.js'));
+    $script = new moodle_url('/blocks/configurable_reports/js/datatables/media/js/jquery.js');
+    $script = '
+        if (typeof jQuery == "undefined") {
+            document.write(unescape("%3Cscript type=\"text/javascript\" src=\"'.$script.'\"%3E%3C/script%3E"));
+        }
+    ';
+    echo html_writer::script($script);
     echo html_writer::script(false, new moodle_url('/blocks/configurable_reports/js/datatables/media/js/jquery.dataTables.min.js'));
     echo html_writer::script(false, new moodle_url('/blocks/configurable_reports/js/datatables/extras/FixedHeader/js/FixedHeader.js'));
 
@@ -106,7 +112,15 @@ function cr_add_jsdatatables($cssid) {
 
 function cr_add_jsordering($cssid) {
     global $DB, $CFG, $OUTPUT;
-    echo html_writer::script(false, new moodle_url('/blocks/configurable_reports/js/jquery-latest.js'));
+
+    $script = new moodle_url('/blocks/configurable_reports/js/datatables/media/js/jquery.js');
+    $script = '
+        if (typeof jQuery == "undefined") {
+            document.write(unescape("%3Cscript type=\"text/javascript\" src=\"'.$script.'\"%3E%3C/script%3E"));
+        }
+    ';
+    echo html_writer::script($script);
+
     echo html_writer::script(false, new moodle_url('/blocks/configurable_reports/js/jquery.tablesorter.min.js'));
     $script = '$(document).ready(function() {
         // call the tablesorter plugin
@@ -495,7 +509,7 @@ function cr_make_categories_list(&$list, &$parents, $requiredcapability = '', $e
     if (empty($list)) {
         $list = array();
     }
-    $list += coursecat::cr_make_categories_list($requiredcapability, $excludeid);
+    $list += coursecat::make_categories_list($requiredcapability, $excludeid);
 
     // Building the list of all parents of all categories in the system is highly undesirable and hardly ever needed.
     // Usually user needs only parents for one particular category, in which case should be used:
