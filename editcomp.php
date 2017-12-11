@@ -62,6 +62,8 @@ $PAGE->set_pagelayout('incourse');
 
 $PAGE->requires->js('/blocks/configurable_reports/js/codemirror/lib/codemirror.js');
 $PAGE->requires->css('/blocks/configurable_reports/js/codemirror/lib/codemirror.css');
+$PAGE->requires->css('/blocks/configurable_reports/js/codemirror/addon/display/fullscreen.css');
+$PAGE->requires->css('/blocks/configurable_reports/js/datatables/media/css/jquery.dataTables.css');
 $PAGE->requires->js('/blocks/configurable_reports/js/configurable_reports.js');
 
 $hasreportscap = has_capability('block/configurable_reports:managereports', $context);
